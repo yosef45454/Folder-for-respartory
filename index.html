@@ -1957,14 +1957,16 @@
     });
   })();
 
-  /* Form (no real submit) */
+  /* Form — validate then POST to Netlify Forms via AJAX */
   document.getElementById('auditForm').addEventListener('submit', (e) => {
     e.preventDefault();
     const f = e.currentTarget;
-    const required = f.querySelectorAll('[required]');
+    const status = document.getElementById('formStatus');
+
+    /* Client-side validation */
     let ok = true;
-    required.forEach(input => {
-      if (!input.value.trim()){
+    f.querySelectorAll('[required]').forEach(input => {
+      if (!input.value.trim()) {
         input.style.borderBottomColor = '#ff4040';
         ok = false;
       } else {
@@ -1972,11 +1974,26 @@
       }
     });
     if (!ok) return;
-    document.getElementById('formStatus').classList.add('show');
-    f.reset();
-    setTimeout(() => {
-      document.getElementById('formStatus').classList.remove('show');
-    }, 4500);
+
+    /* POST to Netlify Forms */
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(f)).toString()
+    })
+    .then(() => {
+      status.textContent = '✓ Sent — I\'ll reach out within 24 hours.';
+      status.style.background = 'rgba(202,255,0,0.6)';
+      status.classList.add('show');
+      f.reset();
+      setTimeout(() => status.classList.remove('show'), 4500);
+    })
+    .catch(() => {
+      status.textContent = '✕ Something went wrong — please email me directly.';
+      status.style.background = 'rgba(255,80,80,0.25)';
+      status.classList.add('show');
+      setTimeout(() => status.classList.remove('show'), 5000);
+    });
   });
 
   /* Smooth scroll for nav anchors */
