@@ -503,14 +503,14 @@
   /* Images live inside .marquee-inner (not .row) — target both to be safe */
   .marquee-inner img,
   .row img{
-    width:340px; height:340px; object-fit:cover; flex-shrink:0;
+    width:340px; max-width:340px; height:340px; object-fit:cover; flex-shrink:0;
     border:1px solid var(--rule-2);
     filter:grayscale(0%); transition:transform .35s ease, filter .35s ease;
   }
   @media (max-width:768px){
-    .row{ gap:12px; }
+    .row{ gap:10px; }
     .marquee-inner img,
-    .row img{ width:200px; height:200px; }
+    .row img{ width:170px !important; max-width:170px !important; height:170px !important; }
   }
   .marquee-inner img:hover,
   .row img:hover{ transform:translateY(-6px); }
@@ -1237,9 +1237,9 @@
     .cs-top{ gap: 24px !important; }
     .cs-signature{ margin-top: 20px !important; }
 
-    /* ---- 4) Ad-gallery marquee images ---- */
+    /* ---- 4) Ad-gallery marquee images — 170px = 50% of 340px desktop ---- */
     .marquee-inner img,
-    .row img{ width: 160px !important; height: 160px !important; }
+    .row img{ width: 170px !important; max-width: 170px !important; height: 170px !important; }
     .marquee-inner{ gap: 10px !important; }
     .row{ gap: 10px !important; }
 
