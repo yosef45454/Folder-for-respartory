@@ -1368,7 +1368,7 @@
 <section id="top" class="hero" data-screen-label="01 Hero">
   <div class="wrap">
     <div class="hero-video-wrap reveal in">
-      <video src="assets/hero.mp4" autoplay muted loop playsinline></video>
+      <video src="assets/hero.mp4" autoplay muted loop playsinline poster="assets/yosef.jpg"></video>
       <div class="hero-video-overlay"></div>
     </div>
 
@@ -1843,6 +1843,32 @@
 
 <!-- ===================  SCRIPTS  =================== -->
 <script>
+  /* Force hero video autoplay on iOS Safari, which blocks autoplay until
+     a user gesture unless the video is muted + playsinline (both set).
+     We call .play() programmatically so Safari's low-power mode and
+     content blockers can't suppress it silently. */
+  (function forceHeroPlay(){
+    function tryPlay(){
+      var v = document.querySelector('.hero-video-wrap video');
+      if (!v) return;
+      v.muted = true;
+      var p = v.play();
+      if (p !== undefined){
+        p.catch(function(){ /* autoplay blocked — poster stays visible */ });
+      }
+    }
+    if (document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', tryPlay);
+    } else {
+      tryPlay();
+    }
+    /* Second attempt after a short delay covers iOS Safari quirks where the
+       first call fires before the browser has decided to allow autoplay. */
+    window.addEventListener('load', function(){
+      setTimeout(tryPlay, 300);
+    });
+  })();
+
   /* Build marquee rows */
   (function buildGallery(){
     const all = Array.from({length:10}, (_,i) => `assets/ad-${String(i+1).padStart(2,'0')}.png`);
