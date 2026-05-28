@@ -55,8 +55,8 @@
   .eyebrow::before{ content:""; width:24px; height:1px; background:var(--accent); }
 
   /* ----------  LAYOUT  ---------- */
-  .wrap{ width:100%; max-width:1440px; margin:0 auto; padding:0 56px; }
-  @media (max-width:768px){ .wrap{ padding:0 24px; } }
+  .wrap{ width:100%; max-width:1440px; margin:0 auto; padding:0 56px; --wrap-pad:56px; }
+  @media (max-width:768px){ .wrap{ padding:0 24px; --wrap-pad:24px; } }
 
   section{ position:relative; border-top:1px solid var(--rule); }
   .section-pad{ padding:120px 0; }
@@ -138,6 +138,16 @@
   }
   @media (max-width:900px){
     .hero-video-wrap{ width:100%; max-width:none; }
+  }
+  /* Mobile: break out of .wrap padding so video is edge-to-edge */
+  @media (max-width:768px){
+    .hero-video-wrap{
+      width:100vw;
+      max-width:100vw;
+      margin-left:calc(-1 * var(--wrap-pad, 24px));
+      border-left:0;
+      border-right:0;
+    }
   }
   .hero-video-wrap video{ width:100%; height:100%; object-fit:cover; }
   .hero-video-overlay{
@@ -1177,8 +1187,15 @@
   /* ====================================================== */
   @media (max-width: 768px){
 
-    /* ---- 1) Hero: video closer to the top, less air ---- */
+    /* ---- 1) Hero: video closer to the top, less air; video edge-to-edge ---- */
     .hero{ padding: 72px 0 48px !important; }
+    .hero-video-wrap{
+      width: 100vw !important;
+      max-width: 100vw !important;
+      margin-left: -24px !important;
+      border-left: 0 !important;
+      border-right: 0 !important;
+    }
     .hero-headline{
       font-size: 30px !important;
       line-height: 1 !important;
