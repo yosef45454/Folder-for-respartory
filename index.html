@@ -1492,8 +1492,8 @@
 <!-- ===================  MY PROCESS / AI  =================== -->
 <section class="proc section-pad" data-screen-label="My Process" style="padding: 90px 0px 110px">
   <div class="wrap">
-    <video class="proc-video reveal" autoplay muted loop playsinline preload="metadata">
-      <source src="assets/process.mp4" type="video/mp4" />
+    <video class="proc-video reveal" muted loop playsinline preload="none">
+      <source data-src="assets/process.mp4" type="video/mp4" />
     </video>
     <span class="eyebrow proc-eyebrow reveal" data-delay="1">The Process</span>
     <h2 class="display proc-headline reveal" data-delay="1">How I use <span class="acc">AI</span> to make your ads.<br />Start to finish.</h2>
@@ -1977,21 +1977,47 @@
     });
   })();
 
-  /* Force process background video to play on iOS Safari */
-  (function forceProcPlay(){
-    function tryPlay(){
+  /* Lazy-load + autoplay process video — only fetches when section is near viewport */
+  (function procVideoLazy(){
+    function init(){
       var v = document.querySelector('.proc-video');
       if (!v) return;
-      v.muted = true;
-      var p = v.play();
-      if (p !== undefined){ p.catch(function(){}); }
+
+      function loadAndPlay(){
+        v.querySelectorAll('source[data-src]').forEach(function(s){
+          s.src = s.getAttribute('data-src');
+          s.removeAttribute('data-src');
+        });
+        v.load();
+        v.muted = true;
+        var p = v.play();
+        if (p !== undefined){ p.catch(function(){}); }
+      }
+
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          if (e.isIntersecting){
+            if (v.querySelector('source[data-src]')){
+              loadAndPlay();
+            } else {
+              v.muted = true;
+              var p = v.play();
+              if (p !== undefined){ p.catch(function(){}); }
+            }
+          } else {
+            v.pause();
+          }
+        });
+      }, { threshold: 0.1 });
+
+      io.observe(v);
     }
+
     if (document.readyState === 'loading'){
-      document.addEventListener('DOMContentLoaded', tryPlay);
+      document.addEventListener('DOMContentLoaded', init);
     } else {
-      tryPlay();
+      init();
     }
-    window.addEventListener('load', function(){ setTimeout(tryPlay, 300); });
   })();
 
   /* Build marquee rows */
